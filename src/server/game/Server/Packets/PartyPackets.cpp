@@ -33,7 +33,7 @@ WorldPacket const* WorldPackets::Party::PartyCommandResult::Write()
     _worldPacket.WriteBits(Command, 4);
     _worldPacket.WriteBits(Result, 6);
 
-    _worldPacket << ResultData;
+    _worldPacket << uint32(ResultData);
     _worldPacket << ResultGUID;
     _worldPacket.WriteString(Name);
 
@@ -78,12 +78,12 @@ WorldPacket const* WorldPackets::Party::PartyInvite::Write()
     _worldPacket << InviterBNetAccountId;
     _worldPacket << uint16(Unk1);
     _worldPacket << uint32(ProposedRoles);
-    _worldPacket << int32(LfgSlots.size());
-    _worldPacket << LfgCompletedMask;
+    _worldPacket << uint32(LfgSlots.size());
+    _worldPacket << uint32(LfgCompletedMask);
 
     _worldPacket.WriteString(InviterName);
 
-    for (int32 LfgSlot : LfgSlots)
+    for (uint32 LfgSlot : LfgSlots)
         _worldPacket << LfgSlot;
 
     return &_worldPacket;
@@ -212,7 +212,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Party::PartyMemberStats c
     data << int16(memberStats.PositionY);
     data << int16(memberStats.PositionZ);
     data << int32(memberStats.VehicleSeat);
-    data << int32(memberStats.Auras.size());
+    data << uint32(memberStats.Auras.size());
     data << memberStats.Phases;
 
     for (WorldPackets::Party::PartyMemberAuraStates const& aura : memberStats.Auras)
@@ -420,7 +420,9 @@ WorldPacket const* WorldPackets::Party::GroupNewLeader::Write()
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Party::PartyPlayerInfo const& playerInfo)
 {
     data.WriteBits(playerInfo.Name.size(), 6);
+    data.WriteBits(playerInfo.VoiceStateID.size(), 6);
     data.WriteBit(playerInfo.FromSocialQueue);
+    data.WriteBit(playerInfo.VoiceChatSilenced);
     data << playerInfo.GUID;
     data << uint8(playerInfo.Status);
     data << uint8(playerInfo.Subgroup);
@@ -428,6 +430,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Party::PartyPlayerInfo co
     data << uint8(playerInfo.RolesAssigned);
     data << uint8(playerInfo.Class);
     data.WriteString(playerInfo.Name);
+    data.WriteString(playerInfo.VoiceStateID);
 
     return data;
 }

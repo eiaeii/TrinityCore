@@ -102,13 +102,13 @@ WorldPacket const* WorldPackets::Petition::ServerPetitionShowSignatures::Write()
     _worldPacket << Item;
     _worldPacket << Owner;
     _worldPacket << OwnerAccountID;
-    _worldPacket << PetitionID;
+    _worldPacket << int32(PetitionID);
 
     _worldPacket << uint32(Signatures.size());
-    for (PetitionSignature signature : Signatures)
+    for (PetitionSignature const& signature : Signatures)
     {
         _worldPacket << signature.Signer;
-        _worldPacket << signature.Choice;
+        _worldPacket << int32(signature.Choice);
     }
 
     return &_worldPacket;
